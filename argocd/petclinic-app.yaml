@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: petclinic
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Oh-jongmin/ojm.git
+    targetRevision: main
+    path: argocd/manifests
+    kustomize: {}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+  syncOptions:
+    - CreateNamespace=true
+

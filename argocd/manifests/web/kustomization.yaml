@@ -1,0 +1,5 @@
+resources:
+  - web-config.yaml
+  - web-deployment.yaml
+  - web-service.yaml
+

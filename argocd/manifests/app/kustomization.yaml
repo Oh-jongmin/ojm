@@ -1,0 +1,6 @@
+resources:
+  - app-config.yaml
+  - app-deployment.yaml
+  - app-secret.yaml
+  - app-service.yaml
+

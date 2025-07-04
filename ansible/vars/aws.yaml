@@ -1,0 +1,3 @@
+AWS_DEFAULT_REGION: "ap-northeast-2"
+EKS_CLUSTER_NAME: "pnp-cluster"
+ACCOUNT_ID: "560971842042"

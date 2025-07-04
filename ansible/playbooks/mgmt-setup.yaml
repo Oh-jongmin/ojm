@@ -1,0 +1,303 @@
+- name: Setup AWS credentials on mgmt server
+  hosts: mgmt-server
+  become: true
+  vars_files:
+    - ../vars/aws.yaml
+  
+  tasks:
+    - name: Ensure .aws directory exists
+      file:
+        path: /home/ubuntu/.aws
+        state: directory
+        owner: ubuntu
+        mode: '0700'
+
+    - name: Create AWS credentials file from template
+      template:
+        src: ../templates/aws_credentials.j2
+        dest: /home/ubuntu/.aws/credentials
+        owner: ubuntu
+        mode: '0600'
+
+    - name: Create AWS config file from template
+      template:
+        src: ../templates/aws_config.j2
+        dest: /home/ubuntu/.aws/config
+        owner: ubuntu
+        mode: '0600'
+
+    - name: Update APT cache
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install eksctl
+      shell: |
+        curl --silent --location "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" \
+        | tar xz -C /tmp
+        mv /tmp/eksctl /usr/local/bin
+      args:
+        creates: /usr/local/bin/eksctl
+
+    - name: Verify eksctl version
+      command: eksctl version
+
+    - name: Install kubectl
+      shell: |
+        curl -LO https://dl.k8s.io/release/v1.31.0/bin/linux/amd64/kubectl
+        chmod +x kubectl
+        mv kubectl /usr/local/bin/
+      args:
+        creates: /usr/local/bin/kubectl
+
+    - name: Verify kubectl version
+      command: kubectl version --client
+
+    - name: Install unzip (for AWS CLI)
+      apt:
+        name: unzip
+        state: present
+
+    - name: Download AWS CLI v2
+      shell: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      args:
+        creates: awscliv2.zip
+
+    - name: Unzip AWS CLI installer
+      unarchive:
+        src: awscliv2.zip
+        dest: /home/ubuntu
+        remote_src: yes
+      when: not ansible_check_mode
+
+    - name: Install AWS CLI
+      shell: ./aws/install
+      args:
+        creates: /usr/local/bin/aws
+
+    - name: Verify AWS CLI version
+      command: aws --version
+
+    - name: Check AWS Configure
+      shell: aws sts get-caller-identity
+      register: iam_check
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+        AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"
+
+    - name: Associate IAM OIDC provider with EKS
+      shell: |
+        eksctl utils associate-iam-oidc-provider \
+          --region {{ AWS_DEFAULT_REGION }} \
+          --cluster {{ EKS_CLUSTER_NAME }} \
+          --approve
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+        AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"        
+      args:
+        creates: /tmp/.eks_oidc_done
+        executable: /bin/bash
+      register: oidc_assoc_result
+
+    - name: Mark OIDC setup complete
+      file:
+        path: /tmp/.eks_oidc_done
+        state: touch
+      when: oidc_assoc_result.rc == 0
+
+    - name: Get OIDC issuer URL
+      shell: |
+        aws eks describe-cluster \
+          --region {{ AWS_DEFAULT_REGION }} \
+          --name {{ EKS_CLUSTER_NAME }} \
+          --query "cluster.identity.oidc.issuer" \
+          --output text
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+        AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"
+      args:
+        executable: /bin/bash
+      become: false
+      register: oidc_url
+
+    - name: Extract OIDC ID
+      set_fact:
+        oidc_id: "{{ oidc_url.stdout.split('/')[-1] }}"
+
+    - name: Install bash-completion
+      apt:
+        name: bash-completion
+        state: present
+
+    - name: Enable kubectl bash completion
+      shell: |
+        echo 'source <(kubectl completion bash)' >> ~/.bashrc
+        echo 'alias k=kubectl' >> ~/.bashrc
+        echo 'complete -o default -F __start_kubectl k' >> ~/.bashrc
+      args:
+        executable: /bin/bash
+      become: false
+
+    - name: Source .bashrc for current session (optional)
+      shell: source ~/.bashrc
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+      become: false
+
+    - name: Install Docker dependencies
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: yes
+
+    - name: Create directory for Docker GPG key
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Docker GPG key
+      shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      args:
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Add Docker apt repository
+      shell: |
+        echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+        https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Update apt cache after Docker repo added
+      apt:
+        update_cache: yes
+
+    - name: Install Docker pacakages
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Setup Docker alias in .bashrc
+      lineinfile:
+        path: /home/ubuntu/.bashrc
+        line: "alias d='docker'"
+        state: present
+
+    - name: Get EKs VPC ID
+      shell: |
+        aws eks describe-cluster \
+          --region {{ AWS_DEFAULT_REGION }} \
+          --name {{ EKS_CLUSTER_NAME }} \
+          --query "cluster.resourcesVpcConfig.vpcId" \
+          --output text
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+        AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"
+      register: eks_vpc_id
+      become: false
+
+    - name: Set VPC ID fact
+      set_fact:
+        vpc_id: "{{ eks_vpc_id.stdout }}"
+
+    - name: Generate kubeconfig on mgmt-srver
+      shell: >
+        mkdir -p /home/ubuntu/.kube &&
+        aws eks update-kubeconfig --region {{ AWS_DEFAULT_REGION }} --name {{ EKS_CLUSTER_NAME }} --kubeconfig /home/ubuntu/.kube/config
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+        AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"
+      args:
+        executable: /bin/bash
+      become: false
+
+    - name: Download Helm installation script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0755'
+
+    - name: Run Helm install script
+      shell: /tmp/get_helm.sh
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Verify Helm installation
+      command: helm version
+      register: helm_version
+      failed_when: helm_version.rc != 0
+
+    - name: Register Helm repo and update
+      shell: |
+        helm repo add eks https://aws.github.io/eks-charts || true
+        helm repo update
+      args:
+        executable: /bin/bash
+      become: false
+
+    - name: Associcate IAM OIDC provider with EKS
+      shell: |
+        eksctl utils associate-iam-oidc-provider \
+          --region {{ AWS_DEFAULT_REGION }} \
+          --cluster {{ EKS_CLUSTER_NAME }} \
+          --approve
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+        AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"
+      args:
+        executable: /bin/bash
+      become: false
+
+    - name: Create ServiceAccount for ALB Controller
+      shell: |
+        kubectl create serviceaacount aws-load-balancer-controller -n kube-system
+      args:
+        executable: /bin/bash
+      become: false
+ 
+    - name: Annotate ServiceAccount with IAM Role
+      shell: |
+        kubectl annotate serviceaccount aws-load-balancer-controller \ -n kube-system \ eks.amazonaws.com/role-arn=arn:aws:iam::{{ AWS_ACCOUNT_ID }}:role/alb-controller-irsa-role
+      args:
+        executable: /bin/bash
+      become: false
+
+    - name: Install AWS Load Balancer Controller via Helm
+      shell: |
+        helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+          -n kube-system \
+          --set clusterName={{ EKS_CLUSTER_NAME }} \
+          --set serviceAccount.create=false \
+          --set serviceAccount.name=aws-load-balancer-controller \
+          --set region={{ AWS_DEFAULT_REGION }} \
+          --set vpcId={{ vpc_id }} \
+          --version 1.13.2
+      args:
+        executable: /bin/bash
+      become: false
