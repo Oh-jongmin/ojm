@@ -325,6 +325,8 @@
         helm upgrade --install argocd argo/argo-cd \
           --namespace argocd \
           --create-namespace \
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
       args:
         executable: /bin/bash
 
