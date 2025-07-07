@@ -312,3 +312,62 @@
       args:
         executable: /bin/bash
       become: false
+
+    - name: Create argocd namespace
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: argocd
+
+    - name: Add Argo Helm repo
+      shell: |
+        helm repo add argo https://argoproj.github.io/argo-helm
+        helm repo update
+      args:
+        executable: /bin/bash
+
+    - name: Install or upgrade Argo CD via Helm
+      shell: |
+        helm upgrade --install argocd argo/argo-cd \
+          --namespace argocd \
+          --create-namespace \
+      args:
+        executable: /bin/bash
+
+    - name: Wait for Argo CD server service to be ready
+      kubernetes.core.k8s_info:
+        kind: Service
+        namespace: argocd
+        name: argo-cd-argocd-server
+      register: argocd_service
+      until: argocd_service.resources | length > 0
+      retries: 10
+      delay: 10
+
+    
+    - name: Get initial Argo CD admin password
+      shell: |
+        kubectl -n argocd get secret argocd-initial-admin-secret \
+        -o jsonpath="{.data.password}" | base64 --decode
+      register: admin_password
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Show Argo CD admin password
+      debug:
+        msg: "🔐 Argo CD 초기 비밀번호: {{ admin_password.stdout }}"
+
+    - name: Apply Argo CD Applications
+      shell: |
+        kubectl apply -f ../../argocd/apps/argocd-ingress-app.yaml
+        kubectl apply -f ../../argocd/apps/cluster-autoscaler-app.yaml
+        kubectl apply -f ../../argocd/apps/metrics-server-app.yaml
+        kubectl apply -f ../../argocd/apps/monitoring-app.yaml
+        kubectl apply -f ../../argocd/apps/petclinic-app.yaml
+      args:
+        chdir: "{{ playbook_dir }}"
+        executable: /bin/bash
