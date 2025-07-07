@@ -313,15 +313,6 @@
         executable: /bin/bash
       become: false
 
-    - name: Create argocd namespace
-      kubernetes.core.k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: argocd
-
     - name: Add Argo Helm repo
       shell: |
         helm repo add argo https://argoproj.github.io/argo-helm
