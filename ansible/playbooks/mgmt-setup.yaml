@@ -328,16 +328,6 @@
       args:
         executable: /bin/bash
 
-    - name: Wait for Argo CD server service to be ready
-      kubernetes.core.k8s_info:
-        kind: Service
-        namespace: argocd
-        name: argo-cd-argocd-server
-      register: argocd_service
-      until: argocd_service.resources | length > 0
-      retries: 10
-      delay: 10
-    
     - name: Get initial Argo CD admin password
       shell: |
         kubectl -n argocd get secret argocd-initial-admin-secret \
