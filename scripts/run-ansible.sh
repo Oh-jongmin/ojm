@@ -7,13 +7,16 @@ echo "[+] Start Ansible automation..."
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/pnp-key.pem
 
-# 📍 환경변수로 받은 mgmt_ip 사용
+# 📍 환경변수로 전달된 값
 mgmt_ip="$MGMT_IP"
+pnp_key="$PNP_KEY"
+aws_access_key="$AWS_ACCESS_KEY_ID"
+aws_secret_key="$AWS_SECRET_ACCESS_KEY"
 
 # 🔐 Bastion -> MGMT 접속용 키 준비
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
-echo "$PNP_KEY" > ~/.ssh/pnp-key.pem
+echo "$pnp_key" > ~/.ssh/pnp-key.pem
 chmod 600 ~/.ssh/pnp-key.pem
 
 # 🔧 Ansible 확인 및 설치 
@@ -27,8 +30,7 @@ fi
 
 # 📥 GitHub 저장소 clone 또는 pull
 if [ ! -d ~/pnp ]; then
-  GIT_SSH_COMMAND='ssh -i ~/.ssh/pnp-key.pem -o StrictHostKeyChecking=no' \
-  git clone https://github.com/Oh-jongmin/ojm.git ~/pnp
+  git clone https://github.com/Oh-jongmin/ojm.git ~/ojm
 fi
 
 cd ~/pnp/ansible
@@ -43,4 +45,5 @@ ansible_python_interpreter=/usr/bin/python3
 EOF
 
 # 🚀 Ansible 실행
-ansible-playbook -i inventory.ini playbooks/mgmt-setup.yaml
+ansible-playbook -i inventory.ini playbooks/mgmt-setup.yaml \
+  --extra-vars "AWS_ACCESS_KEY_ID=$aws_access_key AWS_SECRET_ACCESS_KEY=$aws_secret_key"
