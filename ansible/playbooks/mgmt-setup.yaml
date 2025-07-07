@@ -361,13 +361,17 @@
       debug:
         msg: "🔐 Argo CD 초기 비밀번호: {{ admin_password.stdout }}"
 
+    - name: Ensure kubernetes.core collection is installed
+      shell: ansible-galaxy collection install kubernetes.core
+      args:
+        executable: /bin/bash
+
     - name: Apply Argo CD Applications
       shell: |
-        kubectl apply -f ../../argocd/apps/argocd-ingress-app.yaml
-        kubectl apply -f ../../argocd/apps/cluster-autoscaler-app.yaml
-        kubectl apply -f ../../argocd/apps/metrics-server-app.yaml
-        kubectl apply -f ../../argocd/apps/monitoring-app.yaml
-        kubectl apply -f ../../argocd/apps/petclinic-app.yaml
+        kubectl apply -f /home/ubuntu/ojm/argocd/apps/argocd-ingress-app.yaml
+        kubectl apply -f /home/ubuntu/ojm/argocd/apps/cluster-autoscaler-app.yaml
+        kubectl apply -f /home/ubuntu/ojm/argocd/apps/metrics-server-app.yaml
+        kubectl apply -f /home/ubuntu/ojm/argocd/apps/monitoring-app.yaml
+        kubectl apply -f /home/ubuntu/ojm/argocd/apps/petclinic-app.yaml
       args:
-        chdir: "{{ playbook_dir }}"
         executable: /bin/bash
