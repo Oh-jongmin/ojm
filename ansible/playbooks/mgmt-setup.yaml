@@ -355,5 +355,10 @@
     - name: Apply Argo CD Applications
       shell: |
         kubectl apply -f /home/ubuntu/argocd-apps/
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+        AWS_REGION: ap-northeast-2
+        KUBECONFIG: /home/ubuntu/.kube/config
       args:
         executable: /bin/bash
