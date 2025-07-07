@@ -11,9 +11,11 @@ resource "aws_instance" "bastion" {
   }
 }
 
-resource "aws_iam_instance_profile" "mgmt-profile" {
-  name = "eksctl-admin-profile"
-  role = data.aws_iam_role.eksctl-admin.name
+resource "aws_iam_instance_profile" "mgmt_profile" {
+  name = "eksctl-mgmt-profile"
+  role = aws_iam_role.eksctl_mgmt_role.name
+  
+  depends_on = [aws_iam_role.eksctl_mgmt_role]
 }
 
 resource "aws_instance" "mgmt" {
@@ -23,6 +25,7 @@ resource "aws_instance" "mgmt" {
   vpc_security_group_ids      = [aws_security_group.mgmt-sg.id]
   associate_public_ip_address = false
   key_name                    = var.key_name
+  iam_instance_profile        = aws_iam_instance_profile.mgmt_profile.name
 
   tags = {
     Name = "mgmt-server"

@@ -10,6 +10,13 @@ resource "aws_iam_role" "eksctl_mgmt_role" {
           AWS = "arn:aws:iam::560971842042:user/ojm"
         }
         Action = "sts:AssumeRole"
+      },
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
       }
     ]
   })
@@ -38,6 +45,13 @@ resource "aws_iam_policy" "eksctl_mgmt_policy" {
           "ssm:GetParameter",
           "ssm:GetParameters"
         ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
         Resource = "*"
       }
     ]

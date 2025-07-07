@@ -1,4 +1,4 @@
-name: Terraform Deployment # Terraform
+name: Terraform Deployment
 
 on:
   push:
@@ -39,8 +39,36 @@ jobs:
       continue-on-error: true
       run: terraform apply --auto-approve
 
+    - name: Save Terraform Outputs
+      run: terraform output -json > tf_outputs.json
+
+    - name: Upload tf_outputs.json as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: tf-outputs
+        path: terraform/tf_outputs.json
+
+    - name: GH Auth
+      env:
+        GH_TOKEN: ${{ secrets.GH_PAT }}
+      run: gh auth setup-git
+
+    - name: Set BASTION_IP secret
+      env:
+        GH_TOKEN: ${{ secrets.GH_PAT }}
+      run: |
+        bastion_ip=$(jq -r '.bastion_public_ip.value' tf_outputs.json)
+        gh secret set BASTION_IP -b "$bastion_ip"
+
+    - name: Set MGMT_IP secret
+      env:
+        GH_TOKEN: ${{ secrets.GH_PAT }}
+      run: |
+        mgmt_ip=$(jq -r '.mgmt_private_ip.value' tf_outputs.json)
+        gh secret set MGMT_IP -b "$mgmt_ip"
+
     - name: Upload tfstate artifact
       uses: actions/upload-artifact@v4
       with:
         name: terraform-tfstate-backup
-        path: terraform/.terraform/ojm-terraform.tfstate
+        path: terraform/.terraform/terraform.tfstate

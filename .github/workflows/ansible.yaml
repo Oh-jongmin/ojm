@@ -1,0 +1,50 @@
+name: Ansible Deployment
+
+on:
+  workflow_run:
+    workflows: ["Terraform Deployment"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  ansible:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 10
+    steps:
+
+      # ✅ 1. 코드 가져오기
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # ✅ 2. SSH 키 복원 (KEY_PAIR 사용)
+      - name: 🔐 Restore shared SSH key (KEY_PAIR)
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.KEY_PAIR }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # ✅ 3. GitHub → Bastion 접속용 SSH 키 복사
+      - name: 🔐 Copy SSH key to Bastion
+        run: |
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ~/.ssh/id_rsa \
+          ${{ secrets.BASTION_USERNAME }}@${{ secrets.BASTION_IP }}:~/.ssh/id_rsa
+      
+      # ✅ 4. run-ansible.sh 복사
+      - name: 🔐 Copy run-ansible.sh to Bastion
+        run: |
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa scripts/run-ansible.sh \
+          ${{ secrets.BASTION_USERNAME }}@${{ secrets.BASTION_IP }}:~/run-ansible.sh
+
+      # ✅ 5. Bastion에서 실행 (MGMT_IP/PNP_KEY 전달)
+      - name: 🚀 Execute run-ansible.sh on Bastion
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
+          ${{ secrets.BASTION_USERNAME }}@${{ secrets.BASTION_IP }} \
+          "export MGMT_IP='${{ secrets.MGMT_IP }}'; \
+          export PNP_KEY='${{ secrets.KEY_PAIR }}'; \
+          bash ~/run-ansible.sh"
