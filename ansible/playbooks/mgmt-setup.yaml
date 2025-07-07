@@ -149,6 +149,13 @@
       ignore_errors: true
       become: false
 
+    - name: Ensure .bashrc is sourced in .bash_profile
+      lineinfile:
+        path: ~/.bash_profile
+        line: 'source ~/.bashrc'
+        create: yes
+        state: present
+
     - name: Install Docker dependencies
       apt:
         name:
