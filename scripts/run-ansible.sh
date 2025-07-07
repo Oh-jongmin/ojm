@@ -5,7 +5,7 @@ echo "[+] Start Ansible automation..."
 
 # 🔐 GitHub 인증용 SSH 키 등록
 eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
+ssh-add ~/.ssh/pnp-key.pem
 
 # 📍 환경변수로 받은 mgmt_ip 사용
 mgmt_ip="$MGMT_IP"
