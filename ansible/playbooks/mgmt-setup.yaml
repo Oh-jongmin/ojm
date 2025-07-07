@@ -326,6 +326,9 @@
           --namespace argocd \
           --create-namespace \
       environment:
+        AWS_ACCESS_KEY_ID: "{{ lookup('ini', 'aws_access_key_id section=default file=/home/ubuntu/.aws/credentials') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('ini', 'aws_secret_access_key section=default file=/home/ubuntu/.aws/credentials') }}"
+        AWS_REGION: ap-northeast-2
         KUBECONFIG: /home/ubuntu/.kube/config
       args:
         executable: /bin/bash
