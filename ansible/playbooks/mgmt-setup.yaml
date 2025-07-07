@@ -346,12 +346,14 @@
       debug:
         msg: "🔐 Argo CD 초기 비밀번호: {{ admin_password.stdout }}"
 
+    - name: Copy Argo CD app manifests to mgmt
+      copy:
+        src: ../../argocd/apps/
+        dest: /home/ubuntu/argocd-apps/
+        mode: '0644'
+
     - name: Apply Argo CD Applications
       shell: |
-        kubectl apply -f /home/ubuntu/ojm/argocd/apps/argocd-ingress-app.yaml
-        kubectl apply -f /home/ubuntu/ojm/argocd/apps/cluster-autoscaler-app.yaml
-        kubectl apply -f /home/ubuntu/ojm/argocd/apps/metrics-server-app.yaml
-        kubectl apply -f /home/ubuntu/ojm/argocd/apps/monitoring-app.yaml
-        kubectl apply -f /home/ubuntu/ojm/argocd/apps/petclinic-app.yaml
+        kubectl apply -f /home/ubuntu/argocd-apps/
       args:
         executable: /bin/bash
