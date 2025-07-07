@@ -276,7 +276,11 @@
 
     - name: Create ServiceAccount for ALB Controller
       shell: |
-        kubectl create serviceaccount aws-load-balancer-controller -n kube-system
+        if ! kubectl get serviceaccount aws-load-balancer-controller -n kube-system > /dev/null 2>&1; then
+          kubectl create serviceaccount aws-load-balancer-controller -n kube-system
+        else
+          echo "[+] ServiceAccount already exists. Skipping creation."
+        fi
       args:
         executable: /bin/bash
       become: false
