@@ -346,7 +346,6 @@
       until: argocd_service.resources | length > 0
       retries: 10
       delay: 10
-
     
     - name: Get initial Argo CD admin password
       shell: |
@@ -360,11 +359,6 @@
     - name: Show Argo CD admin password
       debug:
         msg: "🔐 Argo CD 초기 비밀번호: {{ admin_password.stdout }}"
-
-    - name: Install Ansible Kubernetes Collection 
-      shell: ansible-galaxy collection install -r ansible/requirements.yaml
-      args:
-        executable: /bin/bash
 
     - name: Apply Argo CD Applications
       shell: |
