@@ -2,7 +2,7 @@ name: CI/CD for Petclinic
 
 on:
   workflow_run:
-    workflows: ["Terraform Deployment"]
+    workflows: ["Ansible Deployment"]
     types:
       - completed
 
