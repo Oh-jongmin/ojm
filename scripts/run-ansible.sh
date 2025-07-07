@@ -16,11 +16,11 @@ chmod 700 ~/.ssh
 echo "$PNP_KEY" > ~/.ssh/pnp-key.pem
 chmod 600 ~/.ssh/pnp-key.pem
 
-# 🔧 Ansible 확인 및 설
+# 🔧 Ansible 확인 및 설치 
 if ! command -v ansible-playbook >/dev/null 2>&1; then
     echo "[+] Ansible not found. Installing..."
     sudo apt update
-    sudo apt install -y치 software-properties-common
+    sudo apt install -y software-properties-common
     sudo add-apt-repository --yes --update ppa:ansible/ansible
     sudo apt install -y ansible-core python3-six
 fi
