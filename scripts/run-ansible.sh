@@ -27,8 +27,8 @@ fi
 
 # 📥 GitHub 저장소 clone 또는 pull
 if [ ! -d ~/pnp ]; then
-  GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no' \
-  git clone git@github.com:Oh-jongmin/ojm.git ~/pnp
+  GIT_SSH_COMMAND='ssh -i ~/.ssh/pnp-key.pem -o StrictHostKeyChecking=no' \
+  git clone https://github.com/Oh-jongmin/ojm.git ~/pnp
 fi
 
 cd ~/pnp/ansible
