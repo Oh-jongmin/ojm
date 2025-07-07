@@ -361,8 +361,8 @@
       debug:
         msg: "🔐 Argo CD 초기 비밀번호: {{ admin_password.stdout }}"
 
-    - name: Ensure kubernetes.core collection is installed
-      shell: ansible-galaxy collection install kubernetes.core
+    - name: Install Ansible Kubernetes Collection 
+      shell: ansible-galaxy collection install -r ansible/requirements.yaml
       args:
         executable: /bin/bash
 
