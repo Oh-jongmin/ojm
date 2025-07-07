@@ -29,7 +29,11 @@ if ! command -v ansible-playbook >/dev/null 2>&1; then
 fi
 
 # 📥 GitHub 저장소 clone 또는 pull
-if [ ! -d ~/pnp ]; then
+if [ -d ~/ojm/.git ]; then
+  echo "[+] Git repo exists. Pulling latest..."
+  cd ~/ojm && git pull
+else
+  echo "[+] Cloning fresh Git repo..."
   git clone https://github.com/Oh-jongmin/ojm.git ~/ojm
 fi
 
