@@ -33,7 +33,7 @@ if [ ! -d ~/pnp ]; then
   git clone https://github.com/Oh-jongmin/ojm.git ~/ojm
 fi
 
-cd ~/pnp/ansible
+cd ~/ojm/ansible
 git pull
 
 # 📁 inventory.ini 자동 생성
