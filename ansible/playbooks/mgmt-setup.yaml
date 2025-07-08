@@ -354,6 +354,7 @@
 
     - name: Install or upgrade Argo CD via Helm
       shell: |
+        set -x
         helm upgrade --install argocd argo/argo-cd \
           --namespace argocd \
           --create-namespace \
@@ -363,8 +364,14 @@
         AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
         AWS_REGION: ap-northeast-2
         KUBECONFIG: /home/ubuntu/.kube/config
+      register: helm_result
+      ignore_erros: yes
       args:
         executable: /bin/bash
+
+    - name: Debug Helm Result
+      debug:
+        var: helm_result.stderr_lines
 
     - name: Copy Argo CD app manifests to mgmt
       copy:
