@@ -382,18 +382,11 @@
       register: argocd_password
       changed_when: false
 
-    - name: Argo CD Login
-      shell: |
-        argocd login argo.greenbespinglobal.store \
-          --username admin \
-          --password {{ argocd_password.stdout }} \
-          --insecure
-      environment:
-        HOME: "{{ lookup('env', 'HOME') }}"
-      register: login_result
-      changed_when: false
-
-    - name: Show Login Result
+    - name: Show Argo CD initial admin password
       debug:
-        var: login_result.stdout_lines
+        msg: |
+          🚀 Argo CD 설치 완료!
+          🌐 URL: https://argo.greenbespinglobal.store
+          👤 Username: admin
+          🔑 Password: {{ argocd_password.stdout }}
 
