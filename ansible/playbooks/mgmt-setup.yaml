@@ -379,9 +379,9 @@
 
     - name: Argo CD Login
       shell: |
-        argocd login argo.greenbespinglobal.store
-          --username admin
-          --password {{ argocd_password.stdout }}
+        argocd login argo.greenbespinglobal.store \
+          --username admin \
+          --password {{ argocd_password.stdout }} \
           --insecure
       environment:
         HOME: "{{ lookup('env', 'HOME') }}"
