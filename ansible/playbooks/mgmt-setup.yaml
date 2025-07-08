@@ -365,7 +365,7 @@
         AWS_REGION: ap-northeast-2
         KUBECONFIG: /home/ubuntu/.kube/config
       register: helm_result
-      ignore_erros: yes
+      ignore_errors: yes
       args:
         executable: /bin/bash
 
