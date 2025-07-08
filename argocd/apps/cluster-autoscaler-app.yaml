@@ -6,12 +6,32 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Oh-jongmin/ojm
-    targetRevision: main
-    path: argocd/cluster-autoscaler
+    repoURL: https://kubernetes.github.io/autoscaler
+    targetRevision: 9.29.0
+    chart: cluster-autoscaler
     helm:
-      valueFiles:
-        - values.yaml
+      values: |
+        autoDiscovery:
+          clusterName: pnp-cluster
+          awsRegion: ap-northeast-2
+        rbac:
+          serviceAccount:
+            create: true
+            name: cluster-autoscaler
+        extraArgs:
+          skip-nodes-with-system-pods: false
+          skip-nodes-with-local-storage: false
+          balance-similar-node-groups: true
+          expander: least-waste
+        nodeSelector:
+          kubernetes.io/os: linux
+        tolerations:
+          - key: "node-role.kubernetes.io/control-plane"
+            operator: "Exists"
+            effect: "NoSchedule"
+        fullnameOverride: cluster-autoscaler
+        podAnnotations:
+          cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
@@ -19,4 +39,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-
