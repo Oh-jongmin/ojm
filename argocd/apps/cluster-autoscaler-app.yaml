@@ -7,8 +7,8 @@ spec:
   project: default
   source:
     repoURL: https://kubernetes.github.io/autoscaler
-    targetRevision: 9.29.0
     chart: cluster-autoscaler
+    targetRevision: 9.29.0
     helm:
       values: |
         autoDiscovery:
@@ -39,3 +39,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    synceOptions:
+      - CreateNamespace=true
