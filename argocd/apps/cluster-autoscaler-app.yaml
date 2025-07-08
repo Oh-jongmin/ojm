@@ -9,8 +9,9 @@ spec:
     repoURL: https://github.com/Oh-jongmin/ojm
     targetRevision: main
     path: argocd/cluster-autoscaler
-    kustomize:
-      buildOptions: "--enable-helm"
+    helm:
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
