@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-username/petclinic-infra.git
+    repoURL: https://github.com/Oh-jongmin/ojm
     targetRevision: main
     path: monitoring
     kustomize:
