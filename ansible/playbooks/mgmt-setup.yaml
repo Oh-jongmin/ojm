@@ -352,9 +352,14 @@
         src: files/argocd-values.yaml
         dest: /home/ubuntu/argocd-values.yaml
 
+    - name: Check if Argo CD is already installed
+      shell: |
+        helm list -n argocd | grep argocd
+      register: argocd_installed
+      ignore_errors: yes
+
     - name: Install or upgrade Argo CD via Helm
       shell: |
-        set -x
         helm upgrade --install argocd argo/argo-cd \
           --namespace argocd \
           --create-namespace \
@@ -364,10 +369,9 @@
         AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
         AWS_REGION: ap-northeast-2
         KUBECONFIG: /home/ubuntu/.kube/config
-      register: helm_result
-      ignore_errors: yes
       args:
         executable: /bin/bash
+      when: argocd_installed.rc != 0
 
     - name: Debug Helm Result
       debug:
