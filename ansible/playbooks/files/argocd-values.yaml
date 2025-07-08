@@ -1,3 +1,6 @@
+global:
+  domain: argo.greenbespinglobal.store
+
 server:
   ingress:
     enabled: true
@@ -13,8 +16,6 @@ server:
       external-dns.alpha.kubernetes.io/hostname: argo.greenbespinglobal.store.
     hosts:
       - argo.greenbespinglobal.store
-    paths:
-      - /
     pathType: Prefix
     https: true
   extraArgs:
