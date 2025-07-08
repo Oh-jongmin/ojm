@@ -340,12 +340,17 @@
       args:
         executable: /bin/bash
 
+    - name: Copy Argo CD values file
+      copy:
+        src: files/argocd-values.yaml
+        dest: /home/ubuntu/argocd-values.yaml
+
     - name: Install or upgrade Argo CD via Helm
       shell: |
         helm upgrade --install argocd argo/argo-cd \
           --namespace argocd \
           --create-namespace \
-          --set server.extraArgs="{--insecure}"
+          -f /home/ubuntu/argocd-values.yaml
       environment:
         AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
         AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
