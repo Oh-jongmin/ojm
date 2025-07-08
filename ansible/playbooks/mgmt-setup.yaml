@@ -342,7 +342,7 @@
 
     - name: Add Argo Helm repo
       shell: |
-        helm repo list | grep -q '^argo' || helm repo add argo https://argoproj.github.io/argo-helm
+        helm repo add argo https://argoproj.github.io/argo-helm || true
         helm repo update
       args:
         executable: /bin/bash
