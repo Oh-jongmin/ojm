@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/Oh-jongmin/ojm
     targetRevision: main
-    path: monitoring
+    path: argocd/monitoring
     kustomize:
       namePrefix: ""
   destination:
