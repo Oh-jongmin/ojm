@@ -23,11 +23,11 @@ variable "private_mgmt_subnet_cidrs" {
 }
 
 variable "private_ng_subnet_cidrs" {
-  default = ["10.0.12.0/24", "10.0.22.0/24"]
+  default = ["10.0.12.0/23", "10.0.22.0/23"]
 }
 
 variable "private_rds_subnet_cidrs" {
-  default = ["10.0.13.0/24", "10.0.23.0/24"]
+  default = ["10.0.14.0/24", "10.0.24.0/24"]
 }
 
 variable "key_name" {

@@ -9,8 +9,8 @@ spec:
     repoURL: https://github.com/Oh-jongmin/ojm
     targetRevision: main
     path: argocd/cluster-autoscaler
-    plugin:
-      name: kustomize-helm
+    kustomize:
+        namePrefix: cluster-autoscaler-
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
