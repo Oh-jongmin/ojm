@@ -29,8 +29,8 @@ configs:
         id: github
         name: GitHub
         config:
-          clientID: Ov23liAYzwRHZKzvj4Ou
-          clientSecret: 327faff580eaaeb35c02c4f92ac003242d812ecb
+          clientID: {{ ARGOCD_GH_CLIENT_ID }}
+          clientSecret: {{ ARGOCD_GH_CLIENT_SECRET }}
 
   rbac:
     policy.csv: |
