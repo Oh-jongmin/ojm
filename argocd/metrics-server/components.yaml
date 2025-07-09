@@ -7,6 +7,7 @@ spec:
   selector:
     matchLabels:
       k8s-app: metrics-server
+  serviceAccountName: metrics-server
   template:
     metadata:
       labels:
