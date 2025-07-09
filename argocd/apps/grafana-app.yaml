@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/Oh-jongmin/ojm
     targetRevision: main
-    path: manifests/monitoring
+    path: argocd/monitoring
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
