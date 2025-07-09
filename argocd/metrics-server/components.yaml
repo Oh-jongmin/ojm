@@ -7,12 +7,12 @@ spec:
   selector:
     matchLabels:
       k8s-app: metrics-server
-  serviceAccountName: metrics-server
   template:
     metadata:
       labels:
         k8s-app: metrics-server
     spec:
+      serviceAccountName: metrics-server
       containers:
       - name: metrics-server
         image: k8s.gcr.io/metrics-server/metrics-server:v0.7.0
