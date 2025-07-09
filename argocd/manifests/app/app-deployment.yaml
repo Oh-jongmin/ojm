@@ -35,8 +35,11 @@ spec:
                 key: db-password
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: 300m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
           volumeMounts:
             - name: app-config-volume
               mountPath: /app/resources/spring/data-access.properties

@@ -20,7 +20,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     node-a = {
-      instance_types = ["t3.small"]
+      instance_types = ["t3.medium"]
       desired_size   = 1
       min_size       = 1
       max_size       = 2
@@ -29,7 +29,7 @@ module "eks" {
     }
 
     node-c = {
-      instance_types = ["t3.small"]
+      instance_types = ["t3.medium"]
       desired_size   = 1
       min_size       = 1
       max_size       = 2
