@@ -360,9 +360,9 @@
       args:
         executable: /bin/bash
 
-    - name: Copy Argo CD values file
-      copy:
-        src: files/argocd-values.yaml
+    - name: Render argocd-values.yaml
+      template:
+        src: ../templates/argocd-values.yaml.j2
         dest: /home/ubuntu/argocd-values.yaml
 
     - name: Check if Argo CD is already installed

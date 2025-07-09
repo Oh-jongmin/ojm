@@ -13,6 +13,8 @@ pnp_key="$PNP_KEY"
 aws_access_key="$AWS_ACCESS_KEY_ID"
 aws_secret_key="$AWS_SECRET_ACCESS_KEY"
 aws_account_id="$AWS_ACCOUNT_ID"
+github_client_id="$GITHUB_CLIENT_ID"
+github_client_secret="$GITHUB_CLIENT_SECRET"
 
 # 🔐 Bastion -> MGMT 접속용 키 준비
 mkdir -p ~/.ssh
@@ -51,4 +53,4 @@ EOF
 
 # 🚀 Ansible 실행
 ansible-playbook -i inventory.ini playbooks/mgmt-setup.yaml \
-  --extra-vars "AWS_ACCESS_KEY_ID=$aws_access_key AWS_SECRET_ACCESS_KEY=$aws_secret_key AWS_ACCOUNT_ID=$aws_account_id"
+  --extra-vars "AWS_ACCESS_KEY_ID=$aws_access_key AWS_SECRET_ACCESS_KEY=$aws_secret_key AWS_ACCOUNT_ID=$aws_account_id GITHUB_CLIENT_ID=$github_client_id GITHUB_CLIENT_SECRET=$github_client_secret"

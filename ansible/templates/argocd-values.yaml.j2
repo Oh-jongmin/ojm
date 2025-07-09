@@ -21,3 +21,18 @@ server:
   extraArgs:
     - --insecure
 
+configs:
+  cm:
+    dex.config: |
+      connectors:
+      - type: github
+        id: github
+        name: GitHub
+        config:
+          clientID: Ov23liAYzwRHZKzvj4Ou
+          clientSecret: 327faff580eaaeb35c02c4f92ac003242d812ecb
+
+  rbac:
+    policy.csv: |
+      g, Oh-jongmin, role:admin
+    policy.default: role:readonly
