@@ -9,7 +9,6 @@ spec:
     repoURL: https://github.com/Oh-jongmin/ojm
     targetRevision: main
     path: argocd/metrics-server
-    kustomize: {}
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
