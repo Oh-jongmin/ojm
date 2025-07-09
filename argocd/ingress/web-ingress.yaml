@@ -10,7 +10,7 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:560971842042:certificate/705d75b5-44d8-4bbf-8e60-ab7c1347b0d9
     alb.ingress.kubernetes.io/ssl-redirect: '443'
-    alb.ingress.kubernetes.io/group.name: ingress-group
+    alb.ingress.kubernetes.io/group.name: petclinic
     alb.ingress.kubernetes.io/healthcheck-path: /
     external-dns.alpha.kubernetes.io/hostname: www.greenbespinglobal.store.
 spec:
