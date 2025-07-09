@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Oh-jongmin/ojm.git
+    repoURL: https://github.com/Oh-jongmin/ojm
     targetRevision: main
     path: argocd/manifests
     kustomize: {}
