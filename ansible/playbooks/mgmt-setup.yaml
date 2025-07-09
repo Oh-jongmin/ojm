@@ -1,4 +1,4 @@
-- name: Setup AWS credentials on mgmt server
+- name: Setup mgmt server
   hosts: mgmt-server
   become: true
   vars_files:
@@ -87,46 +87,22 @@
         AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
         AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"
 
-    - name: Associate IAM OIDC provider with EKS
+    - name: Get OIDC ID from EKS cluster
       shell: |
-        eksctl utils associate-iam-oidc-provider \
-          --region {{ AWS_DEFAULT_REGION }} \
-          --cluster {{ EKS_CLUSTER_NAME }} \
-          --approve
-      environment:
-        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
-        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
-        AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"        
-      args:
-        creates: /tmp/.eks_oidc_done
-        executable: /bin/bash
-      register: oidc_assoc_result
-
-    - name: Mark OIDC setup complete
-      file:
-        path: /tmp/.eks_oidc_done
-        state: touch
-      when: oidc_assoc_result.rc == 0
-
-    - name: Get OIDC issuer URL
-      shell: |
-        aws eks describe-cluster \
-          --region {{ AWS_DEFAULT_REGION }} \
-          --name {{ EKS_CLUSTER_NAME }} \
+        aws eks describe-cluster --name {{ EKS_CLUSTER_NAME }} \
           --query "cluster.identity.oidc.issuer" \
-          --output text
+          --output text | awk -F'/' '{print $NF}'
       environment:
         AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
         AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
         AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"
       args:
         executable: /bin/bash
-      become: false
-      register: oidc_url
+      register: oidc_output
 
-    - name: Extract OIDC ID
+    - name: Set OIDC ID fact
       set_fact:
-        oidc_id: "{{ oidc_url.stdout.split('/')[-1] }}"
+        oidc_id: "{{ oidc_output.stdout }}"
 
     - name: Generate updated Trust Policy for ALB Controller
       copy:
@@ -155,6 +131,40 @@
         aws iam update-assume-role-policy \
           --role-name alb-controller-irsa-role \
           --policy-document file:///tmp/alb-trust-policy.json
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
+        AWS_DEFAULT_REGION: "{{ AWS_DEFAULT_REGION }}"
+      args:
+        executable: /bin/bash
+
+    - name: Generate updated Trust Policy for Cluster Autoscaler
+      copy:
+        dest: /tmp/ca-trust-policy.json
+        content: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Federated": "arn:aws:iam::{{ AWS_ACCOUNT_ID }}:oidc-provider/oidc.eks.{{ AWS_DEFAULT_REGION }}.amazonaws.com/id/{{ oidc_id }}"
+                },
+                "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": {
+                  "StringEquals": {
+                    "oidc.eks.{{ AWS_DEFAULT_REGION }}.amazonaws.com/id/{{ oidc_id }}:sub": "system:serviceaccount:kube-system:cluster-autoscaler"
+                  }
+                }
+              }
+            ]
+          }
+
+    - name: Update Cluster Autoscaler IAM Role Trust Policy
+      shell: |
+        aws iam update-assume-role-policy \
+          --role-name eks-cluster-autoscaler-role \
+          --policy-document file:///tmp/ca-trust-policy.json
       environment:
         AWS_ACCESS_KEY_ID: "{{ AWS_ACCESS_KEY_ID }}"
         AWS_SECRET_ACCESS_KEY: "{{ AWS_SECRET_ACCESS_KEY }}"
@@ -314,7 +324,10 @@
  
     - name: Annotate ServiceAccount with IAM Role
       shell: |
-        kubectl annotate serviceaccount aws-load-balancer-controller \ -n kube-system \ eks.amazonaws.com/role-arn=arn:aws:iam::{{ AWS_ACCOUNT_ID }}:role/alb-controller-irsa-role
+        kubectl annotate serviceaccount aws-load-balancer-controller \ 
+          -n kube-system \ 
+          eks.amazonaws.com/role-arn=arn:aws:iam::{{ AWS_ACCOUNT_ID }}:role/alb-controller-irsa-role \
+          --overwrite
       args:
         executable: /bin/bash
       become: false
@@ -394,6 +407,27 @@
         KUBECONFIG: /home/ubuntu/.kube/config
       args:
         executable: /bin/bash
+
+    - name: Create ServiceAccount for Cluster Autoscaler
+      shell: |
+        if ! kubectl get serviceaccount cluster-autoscaler -n kube-system > /dev/null 2>&1; then
+          kubectl create serviceaccount cluster-autoscaler -n kube-system
+        else
+          echo "[+] ServiceAccount already exists. Skipping creation."
+        fi
+      args:
+        executable: /bin/bash
+      become: false
+
+    - name: Annotate ServiceAccount for Cluster AutoScaler with IAM Role
+      shell: |
+        kubectl annotate serviceaccount cluster-autoscaler \
+          -n kube-system \
+          eks.amazonaws.com/role-arn=arn:aws:iam::{{ AWS_ACCOUNT_ID }}:role/eks-cluster-autoscaler-role \
+          --overwrite
+      args:
+        executable: /bin/bash
+      become: false
 
     - name: Get Argo CD Password
       shell: |

@@ -16,7 +16,7 @@ spec:
           awsRegion: ap-northeast-2
         rbac:
           serviceAccount:
-            create: true
+            create: false
             name: cluster-autoscaler
         extraArgs:
           skip-nodes-with-system-pods: false
