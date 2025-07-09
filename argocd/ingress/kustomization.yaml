@@ -1,3 +1,4 @@
 resources:
+  - grafana-ingress.yaml
   - web-ingress.yaml
 

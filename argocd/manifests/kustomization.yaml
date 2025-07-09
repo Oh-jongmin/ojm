@@ -1,5 +1,3 @@
 resources:
   - app
   - web
-  - ingress
-  - hpa
