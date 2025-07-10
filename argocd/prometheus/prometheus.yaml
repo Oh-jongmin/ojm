@@ -64,6 +64,9 @@ data:
       - job_name: 'kube-state-metrics'
         static_configs:
           - targets: ['kube-state-metrics.monitoring.svc.cluster.local:8080']
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['prometheus.monitoring.svc.cluster.local:9090']
 ---
 # 4. Deployment
 apiVersion: apps/v1
@@ -98,7 +101,7 @@ spec:
           configMap:
             name: prometheus-config
 ---
-# 5. Service (LoadBalancer)
+# 5. Service
 apiVersion: v1
 kind: Service
 metadata:
