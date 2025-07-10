@@ -12,7 +12,7 @@ metadata:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:560971842042:certificate/74a7f882-ce2e-45bd-8a53-32535ee72a43
     alb.ingress.kubernetes.io/ssl-redirect: '443'
     alb.ingress.kubernetes.io/healthcheck-path: /login
-    alb.ingress.kubernetes.io/group.name: monitoring
+    alb.ingress.kubernetes.io/group.name: grafana
     external-dns.alpha.kubernetes.io/hostname: grafana.greenbespinglobal.store.
 spec:
   ingressClassName: alb
