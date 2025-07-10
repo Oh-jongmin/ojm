@@ -1,4 +1,5 @@
 resources:
   - grafana-ingress.yaml
+  - prometheus-ingress.yaml
   - web-ingress.yaml
 
