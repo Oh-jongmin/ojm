@@ -66,7 +66,7 @@ data:
           - targets: ['kube-state-metrics.monitoring.svc.cluster.local:8080']
       - job_name: 'prometheus'
         static_configs:
-          - targets: ['10.0.23.39:9090']
+          - targets: ['localhost:9090']
 ---
 # 4. Deployment
 apiVersion: apps/v1
