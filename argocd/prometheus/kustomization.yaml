@@ -1,3 +1,4 @@
+namespace: monitoring
 resources:
   - kube-state-metrics.yaml
   - node-exporter.yaml
