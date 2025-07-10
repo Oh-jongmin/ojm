@@ -8,9 +8,7 @@ spec:
   source:
     repoURL: https://github.com/Oh-jongmin/ojm
     targetRevision: main
-    path: argocd/monitoring
-    kustomize:
-      namePrefix: ""
+    path: argocd/prometheus
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

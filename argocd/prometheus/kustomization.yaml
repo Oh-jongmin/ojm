@@ -1,5 +1,4 @@
 resources:
-  - grafana.yaml
   - kube-state-metrics.yaml
   - node-exporter.yaml
   - prometheus.yaml
