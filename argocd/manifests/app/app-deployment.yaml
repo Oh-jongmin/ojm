@@ -17,22 +17,11 @@ spec:
       containers:
         - name: app
           image: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:e8bfba3
-          env:
-          - name: DB_URL
-            valueFrom:
-              secretKeyRef:
-                name: secret
-                key: db-url
-          - name: DB_USER
-            valueFrom:
-              secretKeyRef:
-                name: secret
-                key: db-username
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: secret
-                key: db-password
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secret
           resources:
             requests:
               cpu: 300m
@@ -40,11 +29,3 @@ spec:
             limits:
               cpu: 500m
               memory: 1Gi
-          volumeMounts:
-            - name: app-config-volume
-              mountPath: /app/resources/spring/data-access.properties
-              subPath: data-access.properties
-      volumes:
-        - name: app-config-volume
-          configMap:
-            name: app-config
