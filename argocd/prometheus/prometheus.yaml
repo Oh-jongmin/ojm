@@ -58,6 +58,14 @@ data:
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
         kubernetes_sd_configs:
           - role: node
+      - job_name: 'kubelet-cadvisor'
+        scheme: https
+        metrics_path: /metrics/cadvisor
+        tls_config:
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: node
       - job_name: 'node-exporter'
         static_configs:
           - targets: ['node-exporter.monitoring.svc.cluster.local:9100']
