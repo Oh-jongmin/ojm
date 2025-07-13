@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:e8bfba3
+          image: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:latest
           envFrom:
             - configMapRef:
                 name: app-config
