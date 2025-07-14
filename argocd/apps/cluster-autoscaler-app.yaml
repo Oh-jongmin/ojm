@@ -11,18 +11,13 @@ spec:
     targetRevision: 9.29.0
     helm:
       values: |
-        awsRegion: ap-northeast-2
+        autoDiscovery:
+          clusterName: pnp-cluster
+          awsRegion: ap-northeast-2
         rbac:
           serviceAccount:
             create: false
             name: cluster-autoscaler
-        autoscalingGroups:
-          - name: eks-node-a-202507110050346870000001d-cecbfb7b-3767-5fa9-5659-d558f63e2cd5
-            minSize: 1
-            maxSize: 2
-          - name: eks-node-c-202507110050346874000001f-5acbfb7b-3766-a0e3-b2dc-acab8dc70a23
-            minSize: 1
-            maxSize: 2
         extraArgs:
           skip-nodes-with-system-pods: false
           skip-nodes-with-local-storage: false
