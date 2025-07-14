@@ -19,27 +19,20 @@ module "eks" {
   create_node_security_group    = false
 
   eks_managed_node_groups = {
-    node-a = {
+    pnp-node = {
       instance_types = ["t3.medium"]
-      desired_size   = 1
+      desired_size   = 2
       min_size       = 1
-      max_size       = 2
-      subnet_ids     = [aws_subnet.private-ng[0].id]
+      max_size       = 3
+      subnet_ids     = [
+        aws_subnet.private-ng[0].id,
+        aws_subnet.private-ng[1].id
+      ]
       iam_role_arn   = "arn:aws:iam::560971842042:role/eksctl-mgmt-role"
     }
-
-    node-c = {
-      instance_types = ["t3.medium"]
-      desired_size   = 1
-      min_size       = 1
-      max_size       = 2
-      subnet_ids     = [aws_subnet.private-ng[1].id]
-      iam_role_arn   = "arn:aws:iam::560971842042:role/eksctl-mgmt-role"
-    }
-  }
 
   tags = {
     Environment = "dev"
-    Terrform    = "true"
+    Terraform    = "true"
   }
 }
