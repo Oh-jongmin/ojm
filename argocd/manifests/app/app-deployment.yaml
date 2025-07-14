@@ -36,10 +36,10 @@ spec:
           resources:
             requests:
               cpu: "500m"
-              memory: "1Gi"
+              memory: "2Gi"
             limits:
               cpu: "500m"
-              memory: "1Gi"
+              memory: "2Gi"
           volumeMounts:
             - name: app-config-volume
               mountPath: /app/resources/spring/data-access.properties
