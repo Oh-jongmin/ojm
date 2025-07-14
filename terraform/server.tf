@@ -14,7 +14,7 @@ resource "aws_instance" "bastion" {
 resource "aws_iam_instance_profile" "mgmt_profile" {
   name = "eksctl-mgmt-profile"
   role = aws_iam_role.eksctl_mgmt_role.name
-  
+
   depends_on = [aws_iam_role.eksctl_mgmt_role]
 }
 

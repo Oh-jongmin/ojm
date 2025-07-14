@@ -24,15 +24,16 @@ module "eks" {
       desired_size   = 2
       min_size       = 1
       max_size       = 3
-      subnet_ids     = [
+      subnet_ids = [
         aws_subnet.private-ng[0].id,
         aws_subnet.private-ng[1].id
       ]
-      iam_role_arn   = "arn:aws:iam::560971842042:role/eksctl-mgmt-role"
+      iam_role_arn = "arn:aws:iam::560971842042:role/eksctl-mgmt-role"
     }
+  }
 
   tags = {
     Environment = "dev"
-    Terraform    = "true"
+    Terraform   = "true"
   }
 }
