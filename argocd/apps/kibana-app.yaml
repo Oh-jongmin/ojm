@@ -12,7 +12,7 @@ spec:
     helm:
       parameters:
         - name: elasticsearch.hosts[0]
-          value: http://elasticsearch-master:9200
+          value: elasticsearch-master
         - name: elasticsearch.protocol
           value: http
         - name: elasticsearch.port
