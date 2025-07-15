@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/Oh-jongmin/ojm
-    targetRevision: HEAD
+    targetRevision: main
     path: argocd/elasticsearch
     kustomize:
       enableHelm: true
