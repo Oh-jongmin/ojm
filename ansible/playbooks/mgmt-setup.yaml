@@ -305,7 +305,7 @@
 
     - name: Register Helm repo and update
       shell: |
-        helm repo add eks https://aws.github.io/eks-charts || true
+        helm repo list | grep -q '^eks' || helm repo add eks https://aws.github.io/eks-charts
         helm repo update
       args:
         executable: /bin/bash
