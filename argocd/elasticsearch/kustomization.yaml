@@ -9,5 +9,4 @@ helmCharts:
     version: 22.0.11
     repo: https://charts.bitnami.com/bitnami
     namespace: logging
-    valuesFile: elasticsearch.yaml
 
