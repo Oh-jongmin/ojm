@@ -1,16 +1,3 @@
-master:
-  replicaCount: 1
-  heapSize: 512m
-
-data:
-  replicaCount: 1
-
-coordinating:
-  replicaCount: 1
-
-ingest:
-  replicaCount: 1
-
 volumePermissions:
   enabled: true
 
@@ -19,8 +6,27 @@ persistence:
   storageClass: gp2-csi
   size: 2Gi
 
-resources:
-  requests:
-    cpu: 100m
-    memory: 256Mi
+coordinating:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+data:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+ingest:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+master:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
 
