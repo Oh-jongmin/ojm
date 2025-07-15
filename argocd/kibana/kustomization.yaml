@@ -1,3 +1,0 @@
-namespace: logging
-resources:
-  - kibana.yaml
