@@ -2,4 +2,4 @@ resources:
   - grafana-ingress.yaml
   - kibana-ingress.yaml
   - prometheus-ingress.yaml
-  - web-ingress.yam
+  - web-ingress.yaml
