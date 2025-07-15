@@ -29,6 +29,8 @@ spec:
           value: "_doc"
         - name: rbac.create
           value: "true"
+        - name: readinessProbe.enabled
+          value: "false"
   destination:
     server: https://kubernetes.default.svc
     namespace: logging
