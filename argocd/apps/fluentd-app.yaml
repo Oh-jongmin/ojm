@@ -13,7 +13,7 @@ spec:
       parameters:
         - name: output.elasticsearch.enabled
           value: "true"
-        - name: output.elasticsearch.host
+        - name: output.elasticsearch.host[0]
           value: "elasticsearch.logging.svc.cluster.local"
         - name: output.elasticsearch.port
           value: "9200"
