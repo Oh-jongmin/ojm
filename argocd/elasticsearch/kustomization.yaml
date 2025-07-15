@@ -1,0 +1,7 @@
+helmCharts:
+  - name: elasticsearch
+    repo: https://charts.bitnami.com/bitnami
+    version: 19.14.2 
+    releaseName: elasticsearch
+    namespace: logging
+    valuesFile: elasticsearch.yaml
