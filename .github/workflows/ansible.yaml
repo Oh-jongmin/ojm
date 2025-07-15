@@ -1,10 +1,11 @@
 name: Ansible Deployment
 
 on:
-  workflow_run:
-    workflows: ["Terraform Deployment"]
-    types:
-      - completed
+  push:
+    branches: [main]
+    paths:
+      - 'ansible/**'
+      - '.github/workflows/ansible.yaml'
 
 permissions:
   contents: read

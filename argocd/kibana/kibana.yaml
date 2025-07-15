@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logging
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kibana
+  name: kibana
+  namespace: logging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - env:
+        - name: ELASTICSEARCH_HOSTS
+          value: https://elasticsearch-master:9200
+        - name: ELASTICSEARCH_PORT
+          value: '9200'
+        - name: ELASTICSEARCH_PROTOCOL
+          value: http
+        - name: ELASTICSEARCH_SSL_VERIFICATIONMODE
+          value: none
+        image: bitnami/kibana:latest
+        name: kibana
+        ports:
+        - containerPort: 5601
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5601
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 10
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: logging
+spec:
+  ports:
+  - port: 5601
+    targetPort: 5601
+  selector:
+    app: kibana
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:560971842042:certificate/080d3188-5459-4d21-884e-d9428500d5f5
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    external-dns.alpha.kubernetes.io/hostname: kibana.greenbespinglobal.store
+  name: kibana-ingress
+  namespace: logging
+spec:
+  ingressClassName: alb
+  rules:
+  - host: kibana.greenbespinglobal.store
+    http:
+      paths:
+      - backend:
+          service:
+            name: kibana
+            port:
+              number: 5601
+        path: /
+        pathType: Prefix
+
