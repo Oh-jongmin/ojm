@@ -303,13 +303,17 @@
       register: helm_version
       failed_when: helm_version.rc != 0
 
-    - name: Register Helm repo and update
-      shell: |
-        helm repo list | grep -q '^eks' || helm repo add eks https://aws.github.io/eks-charts
-        helm repo update
-      args:
-        executable: /bin/bash
-      become: false
+    - name: Check if Helm repo exists
+      shell: helm repo list | grep -q '^eks'
+      register: helm_repo_exists
+      ignore_errors: true
+
+    - name: Add EKS Helm repo if not exists
+      command: helm repo add eks https://aws.github.io/eks-charts
+      when: helm_repo_exists.rc != 0
+
+    - name: Helm repo update
+      command: helm repo update
 
     - name: Create ServiceAccount for ALB Controller
       shell: |
