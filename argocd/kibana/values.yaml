@@ -1,23 +1,33 @@
-replicaCount: 1
-
 elasticsearch:
   hosts:
-    - https://elasticsearch.logging.svc.cluster.local:9200
+    - https://elasticsearch.logging.svc.cluster.local
   protocol: https
   port: 9200
   ssl:
     verificationMode: none
 
-service:
-  enabled: true
-  type: ClusterIP
+# Kibana 자체 설정도 명시
+server:
   port: 5601
+  basePath: "/"
+  rewriteBasePath: false
 
-resources:
-  requests:
-    cpu: 100m
-    memory: 256Mi
-  limits:
-    cpu: 200m
-    memory: 512Mi
+replicaCount: 1
+
+# TLS 꺼야 컨테이너 정상 실행됨 (Bitnami Chart 기본값들이 강제 설정할 수 있음)
+extraEnvs:
+  - name: KIBANA_ELASTICSEARCH_URL
+    value: "https://elasticsearch.logging.svc.cluster.local:9200"
+  - name: KIBANA_ELASTICSEARCH_PORT_NUMBER
+    value: "9200"
+  - name: KIBANA_FORCE_INITSCRIPTS
+    value: "false"
+  - name: KIBANA_SERVER_ENABLE_TLS
+    value: "false"
+  - name: KIBANA_ELASTICSEARCH_ENABLE_TLS
+    value: "false"
+  - name: KIBANA_ELASTICSEARCH_TLS_USE_PEM
+    value: "false"
+  - name: KIBANA_ELASTICSEARCH_TLS_VERIFICATION_MODE
+    value: "none"
 
