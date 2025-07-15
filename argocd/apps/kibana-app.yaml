@@ -11,7 +11,7 @@ spec:
     targetRevision: 12.1.3
     helm:
       valueFiles:
-        - ../kibana/values.yaml
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: logging

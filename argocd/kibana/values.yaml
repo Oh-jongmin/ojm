@@ -3,11 +3,13 @@ replicaCount: 1
 elasticsearch:
   hosts:
     - https://elasticsearch.logging.svc.cluster.local:9200
+  protocol: https
+  port: 9200
   ssl:
     verificationMode: none
-  port: 9200
 
 service:
+  enabled: true
   type: ClusterIP
   port: 5601
 
@@ -16,15 +18,6 @@ resources:
     cpu: 100m
     memory: 256Mi
   limits:
-    cpu: 250m
+    cpu: 200m
     memory: 512Mi
-
-persistence:
-  enabled: false
-
-livenessProbe:
-  enabled: false
-
-readinessProbe:
-  enabled: false
 
