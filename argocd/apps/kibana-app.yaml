@@ -19,20 +19,6 @@ spec:
           value: "9200"
         - name: elasticsearch.ssl.verificationMode
           value: none
-        - name: ingress.enabled
-          value: "true"
-        - name: ingress.hostname
-          value: kibana.greenbespinglobal.store
-        - name: ingress.ingressClassName
-          value: alb
-        - name: ingress.annotations."alb\.ingress\.kubernetes\.io/scheme"
-          value: internet-facing
-        - name: ingress.annotations."alb\.ingress\.kubernetes\.io/target-type"
-          value: ip
-        - name: ingress.annotations."alb\.ingress\.kubernetes\.io/backend-protocol"
-          value: HTTP
-        - name: ingress.annotations."alb\.ingress\.kubernetes\.io/certificate-arn"
-          value: arn:aws:acm:ap-northeast-2:560971842042:certificate/080d3188-5459-4d21-884e-d9428500d5f5
         - name: persistence.enabled
           value: "false"
         - name: resources.requests.cpu
