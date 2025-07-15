@@ -12,7 +12,7 @@ spec:
     helm:
       parameters:
         - name: elasticsearch.hosts[0]
-          value: elasticsearch-master
+          value: elasticsearch.logging.svc.cluster.local
         - name: elasticsearch.protocol
           value: http
         - name: elasticsearch.port
