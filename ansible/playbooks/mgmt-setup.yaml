@@ -428,12 +428,3 @@
       args:
         executable: /bin/bash
       become: false
-
-    - name: Show Argo CD initial admin password
-      debug:
-        msg: |
-          🚀 Argo CD 설치 완료!
-          🌐 URL: https://argo.greenbespinglobal.store
-          👤 Username: admin
-          🔑 Password: {{ argocd_password.stdout }}
-

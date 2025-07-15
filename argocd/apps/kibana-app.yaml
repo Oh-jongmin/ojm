@@ -9,6 +9,7 @@ spec:
     repoURL: https://charts.bitnami.com/bitnami
     chart: kibana
     targetRevision: 12.1.3
+    path: argocd/kibana
     helm:
       valueFiles:
         - argocd/kibana/values.yaml
