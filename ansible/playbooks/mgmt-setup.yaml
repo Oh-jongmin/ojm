@@ -305,14 +305,14 @@
 
     - name: Check if Helm repo exists
       shell: helm repo list | grep -q '^eks'
-      register: helm_repo_exists
+      register: eks_repo_check
       ignore_errors: true
 
     - name: Add EKS Helm repo if not exists
       command: helm repo add eks https://aws.github.io/eks-charts
-      when: helm_repo_exists.rc != 0
+      when: helm_repo_checks.rc != 0
 
-    - name: Helm repo update
+    - name: Update Helm repos
       command: helm repo update
 
     - name: Create ServiceAccount for ALB Controller
