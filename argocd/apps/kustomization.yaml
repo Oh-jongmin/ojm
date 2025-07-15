@@ -1,9 +1,0 @@
-resources:
-  - cluster-autoscaler-app.yaml
-  - elasticsearch-app.yaml
-  - grafana-app.yaml
-  - hpa-app.yaml
-  - ingress-app.yaml
-  - metrics-server-app.yaml
-  - petclinic-app.yaml
-  - prometheus-app.yaml

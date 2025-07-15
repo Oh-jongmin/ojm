@@ -1,0 +1,8 @@
+elasticsearch:
+  hosts:
+    - https://elasticsearch.logging.svc.cluster.local:9200
+  protocol: https
+  port: 9200
+  ssl:
+    verificationMode: none
+
