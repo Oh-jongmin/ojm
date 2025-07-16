@@ -12,11 +12,69 @@ spec:
     repoURL: https://fluent.github.io/helm-charts
     targetRevision: 0.5.3
     helm:
-      valueFiles:
-        - ../fluentd/values.yaml
-  project: default
+      values: |
+        fullnameOverride: fluentd
+
+        env:
+          FLUENT_ELASTICSEARCH_SCHEME: http
+          FLUENT_ELASTICSEARCH_HOST: elasticsearch.logging.svc.cluster.local
+          FLUENT_ELASTICSEARCH_PORT: 9200
+          FLUENT_ELASTICSEARCH_LOGSTASH_FORMAT: "true"
+          FLUENT_ELASTICSEARCH_LOGSTASH_PREFIX: fluentd
+          FLUENT_ELASTICSEARCH_SSL_VERIFY: "false"
+
+        config:
+          configMap: |
+            <source>
+              @type tail
+              path /var/log/containers/*.log
+              pos_file /var/log/fluentd-containers.log.pos
+              tag kube.*
+              format cri
+              read_from_head true
+            </source>
+
+            <filter **>
+              @type kubernetes_metadata
+            </filter>
+
+            <filter kubernetes.**>
+              @type grep
+              <exclude>
+                key $.kubernetes.pod_name
+                pattern ^elasticsearch-master.*
+              </exclude>
+            </filter>
+
+            <filter kubernetes.**>
+              @type grep
+              <exclude>
+                key $.kubernetes.namespace_name
+                pattern ^kube-system$
+              </exclude>
+            </filter>
+
+            <filter **>
+              @type grep
+              <regexp>
+                key message
+                pattern (ERROR|Error|WARN|Warning)
+              </regexp>
+            </filter>
+
+            <match **>
+              @type elasticsearch
+              host "#{ENV['FLUENT_ELASTICSEARCH_HOST']}"
+              port "#{ENV['FLUENT_ELASTICSEARCH_PORT']}"
+              scheme "#{ENV['FLUENT_ELASTICSEARCH_SCHEME']}"
+              logstash_format "#{ENV['FLUENT_ELASTICSEARCH_LOGSTASH_FORMAT']}"
+              logstash_prefix "#{ENV['FLUENT_ELASTICSEARCH_LOGSTASH_PREFIX']}"
+              ssl_verify "#{ENV['FLUENT_ELASTICSEARCH_SSL_VERIFY']}"
+            </match>
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
+
+
 
