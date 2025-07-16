@@ -21,6 +21,8 @@ spec:
               host: elasticsearch-master.logging.svc.cluster.local
               port: 9200
               logstash_prefix: fluentd
+              scheme: http
+              verify_es_version_at_startup: false
         image:
           repository: fluent/fluentd-kubernetes-daemonset
           tag: v1.14.2-debian-elasticsearch7-1.0
