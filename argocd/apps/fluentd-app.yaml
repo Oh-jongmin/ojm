@@ -10,8 +10,19 @@ spec:
     chart: fluentd-elasticsearch
     targetRevision: 9.6.2
     helm:
-      valueFiles:
-        - ../fluentd/values.yaml
+      values: |
+        rbac:
+          create: true
+        tolerations:
+          - operator: "Exists"
+        fluentdConfig:
+          output:
+            elasticsearch:
+              host: elasticsearch-master.logging.svc.cluster.local
+              port: 9200
+              logstash_prefix: fluentd
+        image:
+          tag: v1.14.2-debian-elasticsearch7-1.0
   destination:
     server: https://kubernetes.default.svc
     namespace: logging
