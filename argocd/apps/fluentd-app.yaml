@@ -8,9 +8,12 @@ spec:
     server: https://kubernetes.default.svc
     namespace: logging
   source:
-    repoURL: https://github.com/Oh-jongmin/ojm
-    targetRevision: main
-    path: argocd/fluentd
+    chart: fluentd
+    repoURL: https://fluent.github.io/helm-charts
+    targetRevision: 0.5.3
+    helm:
+      valueFiles:
+        - ../fluentd/values.yaml
   project: default
   syncPolicy:
     automated:
