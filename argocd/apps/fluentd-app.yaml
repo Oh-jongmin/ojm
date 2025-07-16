@@ -22,7 +22,8 @@ spec:
               port: 9200
               logstash_prefix: fluentd
         image:
-          tag: v1.14.2-debian-elasticsearch7-1.0
+          repository: quay.io/kiwigrid/fluentd-elasticsearch
+          tag: v3.1.1
   destination:
     server: https://kubernetes.default.svc
     namespace: logging
