@@ -5,42 +5,20 @@ metadata:
   namespace: argocd
 spec:
   project: default
+  source:
+    repoURL: https://kiwigrid.github.io
+    chart: fluentd-elasticsearch
+    targetRevision: 9.6.2
+    helm:
+      valueFiles:
+        - ../fluentd/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: logging
-  source:
-    chart: fluentd
-    repoURL: https://fluent.github.io/helm-charts
-    targetRevision: 0.5.3
-    helm:
-      values: |
-        fullnameOverride: fluentd
-
-        env:
-          FLUENT_ELASTICSEARCH_SCHEME: http
-          FLUENT_ELASTICSEARCH_HOST: elasticsearch.logging.svc.cluster.local
-          FLUENT_ELASTICSEARCH_PORT: 9200
-          FLUENT_ELASTICSEARCH_LOGSTASH_FORMAT: "true"
-          FLUENT_ELASTICSEARCH_LOGSTASH_PREFIX: fluentd
-          FLUENT_ELASTICSEARCH_SSL_VERIFY: "false"
-
-        extraFiles:
-          04_outputs.conf: |
-            <label @OUTPUT>
-              <match **>
-                @type elasticsearch
-                host "#{ENV['FLUENT_ELASTICSEARCH_HOST']}"
-                port "#{ENV['FLUENT_ELASTICSEARCH_PORT']}"
-                scheme "#{ENV['FLUENT_ELASTICSEARCH_SCHEME']}"
-                logstash_format "#{ENV['FLUENT_ELASTICSEARCH_LOGSTASH_FORMAT']}"
-                logstash_prefix "#{ENV['FLUENT_ELASTICSEARCH_LOGSTASH_PREFIX']}"
-                ssl_verify "#{ENV['FLUENT_ELASTICSEARCH_SSL_VERIFY']}"
-              </match>
-            </label>
   syncPolicy:
     automated:
-      selfHeal: true
       prune: true
-
-
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
 
