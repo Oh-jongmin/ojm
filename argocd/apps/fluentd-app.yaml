@@ -4,40 +4,16 @@ metadata:
   name: fluentd
   namespace: argocd
 spec:
-  project: default
-  source:
-    repoURL: https://fluent.github.io/helm-charts
-    chart: fluentd
-    targetRevision: 0.5.3
-    helm:
-      parameters:
-        - name: output.elasticsearch.enabled
-          value: "true"
-        - name: output.elasticsearch.host[0]
-          value: "elasticsearch.logging.svc.cluster.local"
-        - name: output.elasticsearch.port
-          value: "9200"
-        - name: output.elasticsearch.scheme
-          value: "http"
-        - name: output.elasticsearch.logstash_format
-          value: "true"
-        - name: output.elasticsearch.logstash_prefix
-          value: "fluentd"
-        - name: output.elasticsearch.include_tag_key
-          value: "true"
-        - name: output.elasticsearch.type
-          value: "_doc"
-        - name: rbac.create
-          value: "true"
-        - name: readinessProbe.enabled
-          value: "false"
   destination:
     server: https://kubernetes.default.svc
     namespace: logging
+  source:
+    repoURL: https://github.com/Oh-jongmin/ojm
+    targetRevision: main
+    path: argocd/fluentd
+  project: default
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
-    syncOptions:
-      - CreateNamespace=true
 

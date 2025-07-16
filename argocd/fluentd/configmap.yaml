@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+  namespace: logging
+data:
+  fluent.conf: |
+    <source>
+      @type tail
+      path /var/log/containers/*.log
+      pos_file /var/log/fluentd-containers.log.pos
+      tag kube.*
+      format cri
+      read_from_head true
+    </source>
+
+    <filter **>
+      @type kubernetes_metadata
+    </filter>
+
+    <filter kubernetes.**>
+      @type grep
+      <exclude>
+        key $.kubernetes.pod_name
+        pattern ^elasticsearch-master.*
+      </exclude>
+    </filter>
+
+    <filter kubernetes.**>
+      @type grep
+      <exclude>
+        key $.kubernetes.namespace_name
+        pattern ^kube-system$
+      </exclude>
+    </filter>
+
+    <filter **>
+      @type grep
+      <regexp>
+        key message
+        pattern (ERROR|Error|WARN|Warning)
+      </regexp>
+    </filter>
+
+    <filter **>
+      @type record_transformer
+      enable_ruby true
+      <record>
+        hostname ${hostname}
+        container_name ${record["kubernetes"]["container_name"]}
+        namespace ${record["kubernetes"]["namespace_name"]}
+        pod ${record["kubernetes"]["pod_name"]}
+      </record>
+    </filter>
+
+    <match **>
+      @type elasticsearch
+      host elasticsearch.logging.svc.cluster.local
+      port 9200
+      scheme http
+      logstash_format true
+      logstash_prefix fluentd
+      reconnect_on_error true
+      reload_connections true
+      logstash_dateformat %Y.%m.%d
+      include_tag_key true
+      type_name _doc
+    </match>
+
