@@ -24,7 +24,7 @@ spec:
           FLUENT_ELASTICSEARCH_LOGSTASH_PREFIX: fluentd
           FLUENT_ELASTICSEARCH_SSL_VERIFY: "false"
 
-        extraconfig:
+        extraFiles:
           04_outputs.conf: |
             <label @OUTPUT>
               <match **>
