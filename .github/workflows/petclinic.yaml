@@ -23,8 +23,8 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
-        run: ./mvnw clean package -P MySQL -DskipTests
         working-directory: petclinic_btc
+        run: ./mvnw clean package -P MySQL -DskipTests
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
