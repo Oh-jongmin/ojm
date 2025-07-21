@@ -25,6 +25,9 @@ jobs:
         working-directory: petclinic_btc
         run: ./mvnw clean package -PMySQL -DskipTests
 
+      - name: Copy WAR for Docker
+        run: cp target/*.war docker/app/petclinic.war
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -45,5 +48,5 @@ jobs:
 
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ secrets.ECR_REPOSITORY }}:$GIT_SHA
+          docker push ${{ secrets.ECR_REPOSITORY }}:$GIT_SHA ../docker/app
           docker push ${{ secrets.ECR_REPOSITORY }}:latest 
