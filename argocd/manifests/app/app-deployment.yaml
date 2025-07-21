@@ -17,22 +17,7 @@ spec:
       containers:
         - name: app
           image: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:b8aa9ae4bb889492aeb14656fd61ceee6c4f3482
-          env:
-          - name: DB_URL
-            valueFrom:
-              secretKeyRef:
-                name: secret
-                key: db-url
-          - name: DB_USER
-            valueFrom:
-              secretKeyRef:
-                name: secret
-                key: db-username
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: secret
-                key: db-password
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: "500m"
@@ -42,9 +27,21 @@ spec:
               memory: "2Gi"
           volumeMounts:
             - name: app-config-volume
-              mountPath: /app/resources/spring/data-access.properties
+              mountPath: /app/config/data-access.properties
               subPath: data-access.properties
+            - name: app-secret-volume
+              mountPath: /app/config/secret.properties
+              subPath: secret.properties
       volumes:
         - name: app-config-volume
           configMap:
             name: app-config
+            items:
+              - key: data-access.properties
+                path: data-access.properties
+        - name: app-secret-volume
+          secret:
+            secretName: db-secret
+            items:
+              - key: secret.properties
+                path: secret.properties

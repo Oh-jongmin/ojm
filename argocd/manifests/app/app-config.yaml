@@ -4,11 +4,6 @@ metadata:
   name: app-config
 data:
   data-access.properties: |
-    spring.datasource.url=${DB_URL}
-    spring.datasource.username=${DB_USER}
-    spring.datasource.password=${DB_PASSWORD}
-
-    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-    spring.jpa.show-sql=true
-    spring.jpa.database=MYSQL
-    spring.jpa.hibernate.ddl-auto=none
+    jdbc.driverClassName=com.mysql.cj.jdbc.Driver
+    jpa.showSql=true
+    jpa.database=MYSQL
