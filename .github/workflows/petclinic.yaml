@@ -41,8 +41,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.ECR_REPOSITORY }}:$GIT_SHA petclinic_btc/Dockerfile ./petclinic_btc
-          docker tag ${{ secrets.ECR_REPOSITORY }}:$GIT_SHA ${{ secrets.ECR_REPOSITORY }}:latest
+          docker build -t ${{ secrets.ECR_REPOSITORY }}//petclinic_btc:${GIT_SHA} \
+          -t ${{ secrets.ECR_REGISTRY }}/petclinic_btc:latest \
+          -f ./petclinic_btc/Dockerfile ./petclinic_btc
+        env:
+          GIT_SHA: ${{ github.sha }}
 
       - name: Push Docker image to ECR
         run: |
