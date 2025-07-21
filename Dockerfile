@@ -6,7 +6,7 @@ RUN apt update && apt install -y unzip
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 
 # 2. WAR 복사 및 압축 해제
-COPY petclinic.war /tmp/petclinic.war
+COPY target/petclinic.war /tmp/petclinic.war
 RUN mkdir /usr/local/tomcat/webapps/ROOT && \
     unzip /tmp/petclinic.war -d /usr/local/tomcat/webapps/ROOT
 
