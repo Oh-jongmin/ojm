@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:app-final
+          image: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:b8aa9ae4bb889492aeb14656fd61ceee6c4f3482
           env:
           - name: DB_URL
             valueFrom:
