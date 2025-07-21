@@ -41,7 +41,7 @@ spec:
                 path: data-access.properties
         - name: app-secret-volume
           secret:
-            secretName: db-secret
+            secretName: app-secret
             items:
               - key: secret.properties
                 path: secret.properties
