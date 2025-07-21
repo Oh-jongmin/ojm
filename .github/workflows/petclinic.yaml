@@ -1,4 +1,4 @@
-name: Build and Push Petclinic to ECR # Petclinic
+name: Build and Push Petclinic to ECR
 
 on:
   push:
@@ -22,6 +22,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
+        working-directory: petclinic_btc
         run: ./mvnw clean package -PMySQL -DskipTests
 
       - name: Configure AWS Credentials
