@@ -5,7 +5,7 @@ metadata:
   labels:
     app: app
   annotations:
-    argocd-image-updater.argoproj.io/image-list: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:latest
+    argocd-image-updater.argoproj.io/image-list: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr
     argocd-image-updater.argoproj.io/update-strategy: latest
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/git-branch: main    
@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:561fd70253af80838bd49b9cbe6cb84d63bb8ee0
+          image: 560971842042.dkr.ecr.ap-northeast-2.amazonaws.com/pnp-ecr:latest
           imagePullPolicy: Always
           resources:
             requests:
