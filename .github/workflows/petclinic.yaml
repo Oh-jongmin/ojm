@@ -21,9 +21,6 @@ jobs:
         with:
           java-version: '8'
           distribution: 'temurin'
-      - name: Show available profiles
-        working-directory: petclinic_btc
-        run: mvn help:all-profiles
 
       - name: Build with Maven
         working-directory: petclinic_btc
