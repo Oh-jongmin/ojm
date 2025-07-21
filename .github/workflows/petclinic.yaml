@@ -1,9 +1,9 @@
-name: Build and Push Petclinic to ECR # Petclinic
+name: Build and Push Petclinic to ECR
 
 on:
   push:
     branches:
-      - main
+      - [main]
     paths:
       - 'petclinic_btc/**'
       - '.github/workflows/petclinic.yaml'
