@@ -24,7 +24,7 @@ jobs:
 
       - name: Build with Maven
         working-directory: petclinic_btc
-        run: ./mvnw clean package -P MySQL -DskipTests
+        run: mvn clean package -P MySQL -DskipTests
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
