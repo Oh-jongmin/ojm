@@ -1,4 +1,4 @@
-name: Build and Push Petclinic to ECR # Petclinic
+name: Build and Push Petclinic to ECR
 
 on:
   push:
