@@ -8,9 +8,6 @@ on:
       - 'petclinic_btc/**'
       - '.github/workflows/petclinic.yaml'
 
-env:
-
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
