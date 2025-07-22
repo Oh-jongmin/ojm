@@ -4,7 +4,7 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
 <petclinic:layout pageName="home">
-    <h2><fmt:message key="welcome"/></h2>
+    <h2><fmt:message key="welcometopnppetclinic"/></h2>
 
     <div class="container text-center">
         <div class="row">
