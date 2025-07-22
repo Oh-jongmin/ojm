@@ -4,38 +4,33 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
 <petclinic:layout pageName="home">
-    <h2><fmt:message key="welcome to pnp petclinic"/></h2>
-    
+    <h2><fmt:message key="welcome"/></h2>
+
+    <c:set var="cdnBase" value="https://cdn.greenbespinglobal.store" />
+
     <div class="container text-center">
+        <div class="row">
+            <div class="col-md-4">
+                <img class="img-responsive" alt="Duck-1" src="${cdnBase}/duck-1.png" />
+            </div>
+            <div class="col-md-4">
+                <img class="img-responsive" alt="Duck-2" src="${cdnBase}/duck-2.png" />
+            </div>
+            <div class="col-md-4">
+                <img class="img-responsive" alt="Duck-3" src="${cdnBase}/duck-3.png" />
+            </div>
+        </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <spring:url value="/resources/images/duck-1.png" htmlEscape="true" var="duck1Image"/>
-            <img class="img-responsive" alt="Duck-1" src="${duck1Image}"/>
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <img class="img-responsive" alt="Duck-4" src="${cdnBase}/duck-4.png" />
+            </div>
+            <div class="col-md-4">
+                <img class="img-responsive" alt="Duck-5" src="${cdnBase}/duck-5.png" />
+            </div>
+            <div class="col-md-4">
+                <img class="img-responsive" alt="Duck-6" src="${cdnBase}/duck-6.png" />
+            </div>
         </div>
-        <div class="col-md-4">
-            <spring:url value="/resources/images/duck-2.png" htmlEscape="true" var="duck2Image"/>
-            <img class="img-responsive" alt="Duck-2" src="${duck2Image}"/> 
-        </div>
-        <div class="col-md-4">
-            <spring:url value="/resources/images/duck-3.png" htmlEscape="true" var="duck3Image"/>
-            <img class="img-responsive" alt="Duck-3" src="${duck3Image}"/>          
-        </div>
-    </div>
-
-    <div class="row-mt-3">
-        <div class="col-md-4">
-            <spring:url value="/resources/images/duck-4.png" htmlEscape="true" var="duck4Image"/>
-            <img class="img-responsive" alt="Duck-4" src="${duck4Image}" />
-        </div>
-        <div class="col-md-4">
-            <spring:url value="/resources/images/duck-5.png" htmlEscape="true" var="duck5Image"/>
-            <img class="img-responsive" alt="Duck-5" src="${duck5Image}" />
-        </div>
-            <spring:url value="/resources/images/duck-6.png" htmlEscape="true" var="duck6Image"/>
-            <img class="img-responsive" alt="Duck-6" src="${duck6Image}" />
-        </div>
-      </div>
-
-    </div>
+    </div>    
 </petclinic:layout>
