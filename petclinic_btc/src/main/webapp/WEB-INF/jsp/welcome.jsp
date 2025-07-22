@@ -16,5 +16,16 @@
             <spring:url value="/resources/images/duck-3.png" htmlEscape="true" var="duck3Image"/>
             <img class="img-responsive" alt="Duck-3" src="${duck3Image}"/>          
         </div>
+
+        <div class="col-md-6 text-center">
+            <spring:url value="/resources/images/duck-4.png" htmlEscape="true" var="duck4Image"/>
+            <img class="img-responsive" alt="Duck-4" src="${duck4Image}" />
+
+            <spring:url value="/resources/images/duck-5.png" htmlEscape="true" var="duck5Image"/>
+            <img class="img-responsive" alt="Duck-5" src="${duck5Image}" />
+
+            <spring:url value="/resources/images/duck-6.png" htmlEscape="true" var="duck6Image"/>
+            <img class="img-responsive" alt="Duck-6" src="${duck6Image}" />
+        </div>
     </div>
 </petclinic:layout>
