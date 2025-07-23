@@ -1,8 +1,0 @@
-helmCharts:
-  - name: elasticsearch
-    releaseName: elasticsearch
-    version: 22.0.11
-    repo: https://charts.bitnami.com/bitnami
-    namespace: logging
-    valuesFile: values.yaml
-
